@@ -23,6 +23,7 @@ const schema = Joi.object({
             .required()
             .pattern(/http?s:\/\/.+\.(jpe?g|png|gif|svg)/i),
         videoUrl: Joi.string()
+            .optional()
             .min(5),
         categories:Joi.array()
             .required()

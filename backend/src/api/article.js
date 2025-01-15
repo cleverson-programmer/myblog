@@ -75,7 +75,7 @@ module.exports = (app, repository) =>{
     });
 
     //Atualizando todo o artigo
-    app.put('/articles/:id', validateToken, validateAdmin, validateArticle, async (req, res) => {
+    app.put('/articles/put/:id', validateToken, validateAdmin, validateArticle, async (req, res) => {
         const articleId = req.params.id;
         const updatedArticle = req.body;
 
@@ -92,7 +92,7 @@ module.exports = (app, repository) =>{
     });
 
     //Atualizando um trecho do artigo
-    app.patch('/articles/:id', validateToken, validateAdmin, validateArticlePatch, async (req, res) => {
+    app.patch('/articles/patch/:id', validateToken, validateAdmin, validateArticlePatch, async (req, res) => {
         const articleId = req.params.id;
         const updatedArticle = req.body;
 
@@ -110,7 +110,7 @@ module.exports = (app, repository) =>{
 
 
     //deletar artigo do banco
-    app.delete('/articles/:id', validateToken, validateAdmin, async (req, res, next) =>{
+    app.delete('/articles/delete/:id', validateToken, validateAdmin, async (req, res, next) =>{
         const id = req.params.id
         const result = await repository.deleteArticle(id)
 

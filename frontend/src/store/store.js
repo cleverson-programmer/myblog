@@ -5,6 +5,8 @@ import authReducer from './slices/authSlice';
 import articleReducer from './slices/articleSlice';
 import paginationReducer from './slices/paginationSlice';
 import articlesReducer from './slices/articleIdSlice'
+import newArticleReducer from './slices/newArticleSlice'
+import articlesTableReducer from './slices/articleTableSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     article: articlesReducer,
     articles: articleReducer,
     pagination: paginationReducer,
+    newArticle: newArticleReducer,
+    articlesTable: articlesTableReducer,
   },
 });
 

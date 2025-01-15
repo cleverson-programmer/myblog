@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Image from "next/image";
-import ProtectedRoute from '../components/protectedRoute';
+import ProtectedRoute from '../validations/protectedRoute';
 import { Header } from "@/components/home/nav/header";
 import { Main } from "@/components/home/main/main";
 
@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <ProtectedRoute>
       <div className=" min-h-screen px-4 pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
-        <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start pt-4">
           <Header/>
           <Main/>
         </main>

@@ -7,23 +7,18 @@ import { SidebarSettings } from "../sidebar/settings/Sidebar";
 import LanguageToggle from "@/languages/languageToggle";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import jwt from 'jsonwebtoken'
+
+import { isAdminUser } from "@/validations/adminValidation";
 
 export function Menu(){
 
   const [isAdmin, setIsAdmin] = useState(false);
     
   const language = useSelector((state) => state.language.language);
+  
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (token) {
-      try {
-        const decodedToken = jwt.decode(token); // Decodifica o token
-        setIsAdmin(decodedToken.profileId === 1); // Verifica se o usuário é administrador
-      } catch (error) {
-        console.error("Erro ao decodificar o token:", error);
-      }
-    }
+    setIsAdmin(isAdminUser(token));
   }, []);
 
     return(

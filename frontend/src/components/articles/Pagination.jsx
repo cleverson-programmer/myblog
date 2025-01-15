@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { fetchPaginatedArticles } from '@/store/slices/paginationSlice'
 import Loading from '@/utils/loading';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { getRandomColor, colors } from '@/utils/randomColors';
 
@@ -30,7 +29,7 @@ export function Pagination(){
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
           {articles.slice(0, 4).map((article) => (
-            <Link key={article._id} href={`/articles/${article._id}`}>
+            <a key={article._id} href={`/articles/${article._id}`}>
                 <div
                 className="rounded-lg overflow-hidden cursor-pointer">
                   <div className="p-4">
@@ -51,7 +50,7 @@ export function Pagination(){
                     </h2>
                   </div>
                 </div>
-            </Link>
+            </a>
           ))}
         </div>
 

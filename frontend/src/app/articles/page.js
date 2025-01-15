@@ -3,12 +3,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getArticles, resetArticles } from '@/store/slices/articleSlice';
-import ProtectedRoute from '@/components/protectedRoute';
+import ProtectedRoute from '@/validations/protectedRoute';
 import Loading from '@/utils/loading';
 import Image from 'next/image';
 import { Header } from '@/components/home/nav/header';
 import { ButtonMain } from '@/components/home/main/button';
-import Link from 'next/link';
 
 import { getRandomColor, colors } from '@/utils/randomColors';
 
@@ -35,14 +34,14 @@ export default function Articles() {
       <div>
         {loading ? <Loading /> : null}
 
-        <div className='p-6'>
+        <div className='p-8 pt-4'>
             <Header/>
         </div>
 
         {/* Grid de artigos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
           {articles.map((article) => (
-            <Link key={article._id} href={`/articles/${article._id}`}>
+            <a key={article._id} href={`/articles/${article._id}`}>
             <div className="rounded-lg overflow-hidden cursor-pointer">
               <div className="p-4">
                 <div
@@ -67,7 +66,7 @@ export default function Articles() {
                 </div>
               </div>
             </div>
-          </Link>
+          </a>
           ))}
         </div>
 

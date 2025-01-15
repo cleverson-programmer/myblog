@@ -6,7 +6,7 @@ import { getArticleById } from '@/store/slices/articleIdSlice';
 import Loading from '@/utils/loading';
 import Image from 'next/image';
 import { Header } from '@/components/home/nav/header';
-import ProtectedRoute from '@/components/protectedRoute';
+import ProtectedRoute from '@/validations/protectedRoute';
 import { Pagination } from '@/components/articles/Pagination';
 
 import { getRandomColor, colors } from '@/utils/randomColors';
