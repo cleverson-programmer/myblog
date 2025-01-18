@@ -76,6 +76,7 @@ module.exports = (app, repository) =>{
     app.post('/admin/user/new', validateToken, validateAdmin, validateUser, async (req, res, next) => {
     
         const { email, password } = req.body;
+        console.log(email, password)
     
         try {
             // Chama a função específica para criar usuários administradores

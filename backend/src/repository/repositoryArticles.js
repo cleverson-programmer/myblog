@@ -28,6 +28,7 @@ async function findArticles(page = 1){
     return db
             .collection('articles')
             .find({})
+            .sort({ releaseDate: -1 }) // Ordena do mais recente para o mais antigo
             .skip(totalSkip)
             .limit(PAGE_SIZE)
             .toArray()
@@ -38,6 +39,20 @@ async function countArticles() {
     const db = await database.connect();
     const count = await db.collection('articles').countDocuments();
     return count;
+}
+
+// Função para buscar artigos
+async function searchArticles(query) {
+    const db = await database.connect();
+
+    return db
+    .collection('articles')
+    .find(
+        { $text: { $search: query } }, // Realiza a busca textual
+        { projection: { score: { $meta: "textScore" } } } // Inclui a relevância nos resultados
+    )
+    .sort({ score: { $meta: "textScore" }, releaseDate: -1 }) // Ordena por relevância e depois por data
+    .toArray();
 }
 
 
@@ -53,6 +68,7 @@ async function insertArticle(article){
 async function updateArticle(id, article){
     //Retorna o JSON com as informações
     const db = await database.connect();
+
     return db
             .collection("articles")
             //O $set atualiza somente os campos especificados no documento correspondente ao critério de consulta ({ _id: objectId } neste caso)
@@ -75,6 +91,7 @@ module.exports = {
     getArticleId,
     findArticles,
     countArticles,
+    searchArticles,
 
     insertArticle,
     updateArticle,

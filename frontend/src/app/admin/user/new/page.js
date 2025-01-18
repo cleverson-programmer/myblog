@@ -1,14 +1,17 @@
-"use client";
+"use client"
 
+import RegisterAdminForm from "@/components/users/RegisterAdminForm";
+import RegisterLayout from "@/components/users/RegisterLayout";
+import Loading from "@/utils/loading";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import RegisterLayout from "@/components/users/RegisterLayout";
-import RegisterForm from "@/components/users/RegisterForm";
-import Loading from "@/utils/loading";
-import {useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetSuccessMessage } from "@/store/slices/authSlice";
+import AdminRoute from "@/validations/adminRoute";
+import { Header } from "@/components/home/nav/header";
 
-const RegisterPage = () => {
+export default function RegisterAdmin(){
+
   const router = useRouter();
   const successMessage = useSelector((state) => state.auth.successMessage);
   const loading = useSelector((state) => state.auth.loading);
@@ -27,17 +30,17 @@ const RegisterPage = () => {
     }
   }, [successMessage, router]);
 
-  return (
-    <RegisterLayout>
-      {loading ? (
-        <Loading />
-      ) : (
-        <div>
-          <RegisterForm />
-        </div>
-      )}
-    </RegisterLayout>
-  );
-};
-
-export default RegisterPage;
+    return(
+    <AdminRoute>
+        <RegisterLayout>
+            {loading ? (
+                <Loading />
+            ) : (
+                <div>
+                <RegisterAdminForm/>
+                </div>
+            )}
+        </RegisterLayout>
+    </AdminRoute>
+    )
+}

@@ -59,7 +59,7 @@ export function SidebarSettings(){
                 <div className=" mt-1 text-center">
                   <div className="flex flex-col">
                     <a href="/articles/new" className="mb-2">
-                      Insert new articles
+                      Insert new article
                     </a>
                     <a href="/articles/edit" className="mb-2">
                       Edit articles
@@ -80,10 +80,10 @@ export function SidebarSettings(){
                 <div className=" mt-1 text-center">
                   <div className="flex flex-col">
                     <a href="/admin/user/new" className="mb-2">
-                      Insert new user
+                      Insert new admin user
                     </a>
                     <a href="/user/edit" className="mb-2">
-                      Edit users
+                      View users
                     </a>
                   </div>
                 </div>

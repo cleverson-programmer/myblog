@@ -11,6 +11,7 @@ import DatePickerField from "@/components/articles/DatePickerField";
 import { Header } from "@/components/home/nav/header";
 
 import AdminRoute from "@/validations/adminRoute";
+import Notification from "@/utils/notification";
 
 const CreateArticle = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ const CreateArticle = () => {
     author: "",
   });
 
+  const [type, setType] = useState("success");
   const [notification, setNotification] = useState(null);
 
   const [isAdmin, setIsAdmin] = useState(false);
@@ -43,7 +45,8 @@ const CreateArticle = () => {
       const result = await dispatch(createArticle(formData)).unwrap();
 
       setNotification(`Article successfully created! ID: ${result}`);
-
+      setType("success");
+      
       setFormData({
         title: "",
         description: "",
@@ -56,7 +59,8 @@ const CreateArticle = () => {
         author: "",
       });
     } catch (error) {
-      alert(`Erro ao criar o artigo: ${error}`);
+      setNotification('Error article is not created')
+      setType("error")
     }
   };
 
@@ -71,13 +75,14 @@ const CreateArticle = () => {
         <h1 className="text-2xl text-center font-bold mt-6 mb-6">
           Create New Article
         </h1>
-        {notification && (
-          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-            {notification}
-          </div>
-        )}
+        <Notification
+          message={notification}
+          type={type}
+          onClose={() => setNotification("")}
+        />
         <InputField
           label="Title"
+          name="Title"
           value={formData.title}
           onChange={(e) => handleChange("title", e.target.value)}
           placeholder="Enter the title"
@@ -107,7 +112,7 @@ const CreateArticle = () => {
         <DatePickerField
           label="Release Date"
           value={formData.releaseDate}
-          onChange={(e) => handleChange("releaseDate", e.target.value)}
+          onChange={(value) => handleChange("releaseDate", value)}
         />
         <InputField
           label="Image URL"

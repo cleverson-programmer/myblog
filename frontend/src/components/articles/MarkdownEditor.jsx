@@ -2,7 +2,6 @@ import React from "react";
 import MarkdownEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import hljs from "highlight.js";
-import "highlight.js/styles/github.css";
 import ReactMarkdown from "react-markdown";
 
 // Função para aplicar o Highlight.js

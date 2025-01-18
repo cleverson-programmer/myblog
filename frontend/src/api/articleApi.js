@@ -8,7 +8,7 @@ export const fetchArticles = async (page = 1) => {
     const response = await axios.get(`http://localhost:3000/articles`, {
       params: { page },
       headers: {
-        Authorization: `Bearer ${token}`, // Adicione o token aqui
+        Authorization: `Bearer ${token}`,
       },
     });
     console.log(response.data)
@@ -32,6 +32,17 @@ export const fetchArticleById = async (id) => {
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to fetch article');
+  }
+};
+
+//Search articles
+export const searchArticlesApi = async (query) => {
+  try {
+    const response = await axios.get('http://localhost:3000/search', { params: { query } });
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar artigos:", error);
+    throw error;
   }
 };
 
@@ -72,6 +83,23 @@ export const putEditArticle = async (id, articleData) => {
     return response.data
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to post new article');
+  }
+};
+
+//Delete article
+export const deleteArticle = async (id) => {
+
+  try {
+    const token = localStorage.getItem('authToken');
+    const response = await axios.delete(`http://localhost:3000/articles/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to delete article');
   }
 };
 

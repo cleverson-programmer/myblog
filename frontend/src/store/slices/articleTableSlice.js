@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchArticles } from '@/api/articleApi';
+import { deletedArticle } from './deleteArticleSlice';
 
 export const fetchArticlesThunk = createAsyncThunk(
   'articles/fetchArticles',
@@ -29,7 +30,10 @@ const articlesTableSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(fetchArticlesThunk.fulfilled, (state, action) => {
-        state.articles = [...state.articles, ...action.payload];
+        const newArticles = action.payload.filter(
+          (article) => !state.articles.some((a) => a._id === article._id)
+        );
+        state.articles = [...state.articles, ...newArticles];
         state.isLoading = false;
         state.currentPage += 1;
         state.hasMore = action.payload.length > 0;
@@ -37,6 +41,9 @@ const articlesTableSlice = createSlice({
       .addCase(fetchArticlesThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(deletedArticle.fulfilled, (state, action) => {
+        state.articles = state.articles.filter((article) => article._id !== action.payload);
       });
   },
 });

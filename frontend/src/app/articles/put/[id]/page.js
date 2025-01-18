@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getArticleById } from "@/store/slices/articleIdSlice";
+import { putEditArticleThunk, resetPutState } from '@/store/slices/putArticleSlice';
 
 import DatePickerField from "@/components/articles/DatePickerField";
 import InputField from "@/components/articles/InputField";
@@ -11,15 +12,21 @@ import MarkdownInput from "@/components/articles/MarkdownEditor";
 import MultiCategoryInput from "@/components/articles/MultiSelectField";
 import { Header } from "@/components/home/nav/header";
 
+import Notification from "@/utils/notification";
+import AdminRoute from "@/validations/adminRoute";
+import Loading from "@/utils/loading";
+
 export default function PagePut() {
 
-    const router = useRouter();
     const { id } = useParams();
     const dispatch = useDispatch();
-    const { article, loading } = useSelector((state) => state.article); // Selecione os dados do Redux
-  
+    const { article, loading } = useSelector((state) => state.article);
+    const { loading: updating, success, error } = useSelector((state) => state.putArticle);
+
+    const [type, setType] = useState("success");
+    const [notification, setNotification] = useState(null);
+
     const [formData, setFormData] = useState({
-      _id: "",
       title: "",
       description: "",
       content: "",
@@ -42,6 +49,32 @@ export default function PagePut() {
         setFormData(article); // Atualiza o formulário com os dados do artigo
       }
     }, [article]);
+
+    useEffect(() => {
+      if (success) {
+        setNotification(`Article successfully edit! ID: ${id}`);
+        setType("success");
+
+        setFormData({
+          _id: "",
+          title: "",
+          description: "",
+          content: "",
+          categories: [],
+          tags: "",
+          releaseDate: "",
+          imageUrl: "",
+          videoUrl: "",
+          author: "",
+        });
+        dispatch(resetPutState()); // Resetar estado
+      }
+      if (error) {
+        setType("error");
+        setNotification('Failed to update article!')
+        
+      }
+    }, [success, id, error, dispatch]);
   
     const handleInputChange = (e) => {
       const { name, value } = e.target;
@@ -53,23 +86,32 @@ export default function PagePut() {
   
     const handleSubmit = (e) => {
       e.preventDefault();
-      console.log("Dados do formulário enviados:", formData);
-      // Lógica para enviar os dados atualizados ao backend
+      console.log(formData)
+
+      // Cria uma cópia do formData sem o campo _id
+      const { _id, ...articleData } = formData;
+
+      dispatch(putEditArticleThunk({ id, articleData }));
     };
   
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loading/>;
 
 
   return (
-    <div>
+    <AdminRoute>
       <Header />
       <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-4">
+        <Notification
+          message={notification}
+          type={type}
+          onClose={() => setNotification("")}
+        />
         {/* ID (somente leitura) */}
         <InputField
           label="ID"
-          className="cursor-none"
           value={formData._id}
           name="_id"
+          onChange={handleInputChange}
           placeholder="Enter the ID"
           disabled
         />
@@ -150,11 +192,12 @@ export default function PagePut() {
         {/* Botão de Enviar */}
         <button
           type="submit"
+          disabled={updating}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          Save Changes
+          {updating ? 'Saving...' : 'Save Changes'}
         </button>
       </form>
-    </div>
+    </AdminRoute>
   );
 }

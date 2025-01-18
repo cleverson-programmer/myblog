@@ -22,7 +22,7 @@ async function start(apis) {
     // Configuração básica do CORS, permite requisições de origens diferentes no frontend
     app.use(
         cors({
-          origin: 'http://localhost:3001',
+          origin: process.env.ORIGIN,
           methods: ['GET', 'POST', 'PUT', 'DELETE'],
           allowedHeaders: ['Content-Type', 'Authorization'],
         })

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi, logoutApi} from '../../api/authApi';
+import { loginApi, registerApi, registerAdminApi, logoutApi} from '../../api/authApi';
 
 //Lógica de login
 export const loginUser = createAsyncThunk(
@@ -15,7 +15,7 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-//Lógica de registro
+//Lógica de registro guest
 export const registerUser = createAsyncThunk(
     'auth/registerUser',
     async ({ email, password }, thunkAPI) => {
@@ -29,6 +29,22 @@ export const registerUser = createAsyncThunk(
         return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error registering, please try again.');
       }
     }
+);
+
+//Lógica de registro admin
+export const registerAdminUser = createAsyncThunk(
+  'auth/registerAdminUser',
+  async ({ email, password }, thunkAPI) => {
+    try {
+      const status = await registerAdminApi(email, password);
+    if (status === 201) {
+      return { message: 'User registered successfully!' }; // Retorna a mensagem de sucesso
+    }
+    return thunkAPI.rejectWithValue('Registration failed.');
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Error registering, please try again.');
+    }
+  }
 );
 
 //Lógica de logout
@@ -61,6 +77,11 @@ const authSlice = createSlice({
     error: null,
     successMessage: null,
   },
+  reducers: {
+    resetSuccessMessage: (state) => {
+      state.successMessage = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -91,6 +112,20 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
+      //register admin
+      .addCase(registerAdminUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerAdminUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(registerAdminUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       // Logout
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
@@ -107,4 +142,7 @@ const authSlice = createSlice({
       });
     },
 });
+
+export const { resetSuccessMessage } = authSlice.actions;
+
 export default authSlice.reducer;

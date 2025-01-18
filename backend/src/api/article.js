@@ -34,6 +34,8 @@ module.exports = (app, repository) =>{
             if (!articles || !articles.length) {
                 return res.status(404).json({ message: 'No articles found for this page' });
             }
+
+            console.log('Articles fetched:', articles.map((a) => a._id));
             return res.json(articles);
         }
     
@@ -45,6 +47,23 @@ module.exports = (app, repository) =>{
     
         res.json(articles);
     });
+
+    // Endpoint de busca
+    app.get('/search', async (req, res) => {
+        try {
+        const { query } = req.query;
+    
+        if (!query) {
+            return res.status(400).json({ message: "Query string is required" });
+        }
+    
+        const results = await repository.searchArticles(query);
+        res.status(200).json(results);
+        } catch (error) {
+        res.status(500).json({ message: "Erro no servidor", error });
+        }
+    });
+
 
     app.post('/articles/new', validateToken, validateAdmin, validateArticle, async (req, res, next) => {
         console.log("Request Body:", req.body); // Log para verificar os dados recebidos
@@ -58,14 +77,14 @@ module.exports = (app, repository) =>{
                 content,
                 categories,
                 tags,
-                releaseDate: new Date(releaseDate),
+                releaseDate: new Date(),
                 imageUrl,
                 videoUrl,
                 author,
             });
 
             //Logger para saber quem registrou um novo filme, qual filme e quando foi registrado
-            logger.info(`User ${res.locals.userId} add the article ${article._id} at ${new Date()}`)
+            logger.info(`User ${res.locals.userId} add the article at ${new Date()}`)
     
             res.status(201).json(article);
         } catch (error) {
@@ -78,6 +97,11 @@ module.exports = (app, repository) =>{
     app.put('/articles/put/:id', validateToken, validateAdmin, validateArticle, async (req, res) => {
         const articleId = req.params.id;
         const updatedArticle = req.body;
+
+        // Converte releaseDate para um objeto Date
+        if (updatedArticle.releaseDate) {
+            updatedArticle.releaseDate = new Date(updatedArticle.releaseDate);
+        }
 
         // Chama a função para atualizar o artigo no banco
         const result = await repository.updateArticle(articleId, updatedArticle);
@@ -95,7 +119,6 @@ module.exports = (app, repository) =>{
     app.patch('/articles/patch/:id', validateToken, validateAdmin, validateArticlePatch, async (req, res) => {
         const articleId = req.params.id;
         const updatedArticle = req.body;
-
         // Chama a função para atualizar o artigo no banco
         const result = await repository.updateArticle(articleId, updatedArticle);
 

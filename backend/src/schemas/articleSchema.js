@@ -12,13 +12,14 @@ const schema = Joi.object({
         content: Joi.string()
             .required()
             .min(10),
-        releaseDate: Joi.string()
+        releaseDate: Joi.date()
+            .iso()
             .required()
-            .regex(/^\d{4}-\d{2}-\d{2}/)
             .messages({
-            "string.pattern.base": "releaseDate deve estar no formato ISO 8601 (YYYY-MM-DD).",
-            "string.empty": "releaseDate é obrigatório.",
-            }),
+            "date.base": "releaseDate deve ser uma data válida.",
+            "date.format": "releaseDate deve estar no formato ISO 8601 (YYYY-MM-DD).",
+            "any.required": "releaseDate é obrigatório."
+        }),
         imageUrl: Joi.string()
             .required()
             .pattern(/http?s:\/\/.+\.(jpe?g|png|gif|svg)/i),
