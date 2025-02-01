@@ -8,7 +8,7 @@ import { putEditArticleThunk, resetPutState } from '@/store/slices/putArticleSli
 
 import DatePickerField from "@/components/articles/DatePickerField";
 import InputField from "@/components/articles/InputField";
-import MarkdownInput from "@/components/articles/MarkdownEditor";
+import TextEditor from "@/components/articles/textEditor";
 import MultiCategoryInput from "@/components/articles/MultiSelectField";
 import { Header } from "@/components/home/nav/header";
 
@@ -132,7 +132,7 @@ export default function PagePut() {
           placeholder="Enter a brief description"
         />
         {/* Conteúdo */}
-        <MarkdownInput
+        <TextEditor
           label="Content"
           value={formData.content}
           name="content"

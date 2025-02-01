@@ -1,20 +1,37 @@
 const database = require('../config/database');
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
-const { ADMIN_PROFILE } = require('../middlewares/validationMiddlewares');
-const { GUEST_PROFILE } = require('../middlewares/validationMiddlewares');
-
+const { ADMIN_PROFILE, GUEST_PROFILE} = require('../utils/profile')
 //retorna todos os users
 async function getAllUsers() {
     const db = await database.connect()
 
-    return db.collection('users').find().toArray();
+    return db
+            .collection('users')
+            .find()
+            .toArray();
 }
 
 //retorna user por id
 async function getUserId(id) {
     const db = await database.connect();
-    return db.collection('users').findOne({ _id: new ObjectId(id) });
+    return db
+            .collection('users')
+            .findOne({ _id: new ObjectId(id) });
+}
+
+async function getUserByEmail(email) {
+    const db = await database.connect();
+    return db
+            .collection('users')
+            .findOne({ email: email});
+}
+
+async function getUserByResetToken(token) {
+    const db = await database.connect();
+    return db
+            .collection('users')
+            .findOne({ resetPasswordToken: token });
 }
 
 const PAGE_SIZE = 5
@@ -35,7 +52,9 @@ async function findUsers(page = 1){
 //retorna quantidade de users
 async function countUsers() {
     const db = await database.connect();
-    const count = await db.collection('users').countDocuments();
+    const count = await db
+                        .collection('users')
+                        .countDocuments();
     return count;
 }
 
@@ -45,7 +64,6 @@ async function updateUser(id, user){
     const db = await database.connect();
     return db
             .collection("users")
-            
             .updateOne({ _id: new ObjectId(id)}, { $set: user})
 }
 
@@ -87,9 +105,37 @@ async function insertUser(user) {
     //Garante que o profile id seja sempre 2 (usuário guest)
     user.profileId = GUEST_PROFILE;
 
+    //Insere primeiro como false, depois que o usuário confirmar antes de passar pelo middleware de validação do login, fica true, se ele não confirmar não consegue passar pelo login
+    user.emailConfirmed = false;
+
     return db
         .collection('users')
         .insertOne(user);
+}
+
+async function findUserByEmail(email, token) {
+    const db = await database.connect();
+    return db
+            .collection("users")
+            .findOne({ email, emailToken: token });
+}
+
+async function confirmUserEmail(email) {
+    const db = await database.connect();
+    return db
+            .collection("users")
+            .updateOne(
+                { email },
+                { 
+                    $set: { 
+                        emailConfirmed: true, // Confirma o email
+                    },
+                    $unset: { 
+                        emailToken: "",
+                        tokenExpiry: "" 
+                    } // Remove os campos completamente
+                }
+            );
 }
 
 //Fn que insere users com permissões de ADMIN no banco
@@ -102,6 +148,9 @@ async function insertAdminUser(user){
 
     // Garante que o profileId seja sempre 1 (admin)
     user.profileId = ADMIN_PROFILE
+
+    //Garante que para admins não precise confirmar email
+    user.emailConfirmed = true
 
     return db
         .collection('users')
@@ -130,6 +179,8 @@ module.exports = {
     getAllUsers,
     getUserId,
     findUsers,
+    getUserByEmail,
+    getUserByResetToken,
     countUsers,
     insertUser,
     updateUser,
@@ -138,5 +189,8 @@ module.exports = {
     getUser,
     insertAdminUser,
     blackListToken,
-    checkBlackList
+    checkBlackList,
+
+    findUserByEmail,
+    confirmUserEmail,
 }

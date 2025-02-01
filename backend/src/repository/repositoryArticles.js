@@ -9,13 +9,50 @@ async function getAllArticles(){
     return db.collection('articles').find().toArray();
 }
 
+async function getCategoriesTagsArticles() {
+    const db = await database.connect();
+    const articles = await db.collection('articles').find().toArray();
+
+    // Contagem de categorias
+    const categoriesCount = {};
+    articles.forEach(article => {
+        if (article.categories && Array.isArray(article.categories)) {
+            article.categories.forEach(category => {
+                if (categoriesCount[category]) {
+                    categoriesCount[category]++;
+                } else {
+                    categoriesCount[category] = 1;
+                }
+            });
+        }
+    });
+
+    // Contagem de tags
+    const tagsCount = {};
+    articles.forEach(article => {
+        if (article.tags && typeof article.tags === 'string') {
+            // Converte a string de tags em um array
+            const tagsArray = article.tags.split(',').map(tag => tag.trim());
+            tagsArray.forEach(tag => {
+                if (tagsCount[tag]) {
+                    tagsCount[tag]++;
+                } else {
+                    tagsCount[tag] = 1;
+                }
+            });
+        }
+    });
+
+    return { categories: categoriesCount, tags: tagsCount };
+}
+
 //Retorna o artigo com o id que foi passado
 async function getArticleId(id) {
     const db = await database.connect();
     return db.collection('articles').findOne({ _id: new ObjectId(id) });
 }
 
-const PAGE_SIZE = 5
+const PAGE_SIZE = 12
 
 //Fn que retorna os artigos referentes a paginação "retorna de 5 em 5"
 async function findArticles(page = 1){
@@ -37,8 +74,7 @@ async function findArticles(page = 1){
 //Retorna a quantidade de documentos presentes no banco de dados
 async function countArticles() {
     const db = await database.connect();
-    const count = await db.collection('articles').countDocuments();
-    return count;
+    return db.collection('articles').countDocuments({});
 }
 
 // Função para buscar artigos
@@ -92,6 +128,7 @@ module.exports = {
     findArticles,
     countArticles,
     searchArticles,
+    getCategoriesTagsArticles,
 
     insertArticle,
     updateArticle,

@@ -10,7 +10,7 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem('authToken', data.token); // Salvar token no localStorage
       return data; // Retorna usuário e token
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message || 'Error authenticating, please check your details.');
+      return thunkAPI.rejectWithValue(error.response.data.message || 'Erro ao se autenticar, verifique os dados ou confime seu email na caixa de entrada.');
     }
   }
 );

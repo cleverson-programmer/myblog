@@ -1,33 +1,72 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { getArticleById } from '@/store/slices/articleIdSlice';
-import Loading from '@/utils/loading';
+import Loading from '@/utils/loading'; // Importando o componente Loading
 import Image from 'next/image';
 import { Header } from '@/components/home/nav/header';
 import ProtectedRoute from '@/validations/protectedRoute';
 import { Pagination } from '@/components/articles/Pagination';
-
 import { getRandomColor, colors } from '@/utils/randomColors';
+import Notification from '@/utils/notification';
 
 export default function ArticlePage({ params }) {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { article, loading, error, page } = useSelector((state) => state.article);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
     const resolveParams = async () => {
-      const { id } = await params; // Resolve params
+      const { id } = await params;
       if (id) {
-        dispatch(getArticleById(id));
+        setIsLoading(true);
+        dispatch(getArticleById(id))
+          .then(() => setIsLoading(false)) // Desativa o loading após a busca ser concluída
+          .catch(() => setIsLoading(false)); // Desativa o loading em caso de erro
       }
     };
 
     resolveParams();
   }, [dispatch, params]);
 
-  if (loading) return <Loading />;
-  if (error) return <p className="text-red-500">{error}</p>;
+  // Verifica se o usuário está autenticado
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false)
+      const timer = setTimeout(() => {
+        router.push("/login");
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [router]);
+
+  if (!isAuthenticated) {
+    return (
+      <Notification
+        message={'Autentique-se primeiro para acessar a página. Redirecionando...'}
+        type='warning'
+      />
+    );
+  }
+
+  
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <p className="text-red-500">{error}</p>
+    )
+  }
 
   return (
     <ProtectedRoute>
@@ -104,11 +143,11 @@ export default function ArticlePage({ params }) {
             <div className="bg-gray-400 rounded-md font-bold text-lg w-fit mt-10 px-4 py-2">
               <p>Artigos relacionados</p>
             </div>
-        </div>
+          </div>
         ) : (
           <p>Artigo não encontrado.</p>
         )}
-        <Pagination/>
+        <Pagination />
       </div>
     </ProtectedRoute>
   );

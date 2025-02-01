@@ -19,13 +19,6 @@ const RegisterPage = () => {
     dispatch(resetSuccessMessage());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (successMessage) {
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
-    }
-  }, [successMessage, router]);
 
   return (
     <RegisterLayout>

@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 
-const Notification = ({ message, type = "success", onClose, duration = 3000 }) => {
+const Notification = ({ message, type = "success", onClose, duration = 5000 }) => {
     useEffect(() => {
       if (message && duration) {
         const timer = setTimeout(() => {

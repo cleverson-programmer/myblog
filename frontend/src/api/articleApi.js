@@ -1,11 +1,13 @@
 import axios from 'axios';
+const BASE_URL = process.env.NEXT_PUBLIC_URL_BACKEND;
+console.log('BASE_URL:', BASE_URL);
 
 //Fetch all articles
 export const fetchArticles = async (page = 1) => {
   try {
     const token = localStorage.getItem('authToken');
 
-    const response = await axios.get(`http://localhost:3000/articles`, {
+    const response = await axios.get(`${BASE_URL}/articles`, {
       params: { page },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -18,12 +20,29 @@ export const fetchArticles = async (page = 1) => {
   }
 };
 
+// Buscar categorias e tags
+export const fetchCategoriesTags = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+
+    const response = await axios.get(`${BASE_URL}/articles/categories-tags`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch categories and tags');
+  }
+};
+
 // Fetch article by ID
 export const fetchArticleById = async (id) => {
   try {
     const token = localStorage.getItem('authToken');
 
-    const response = await axios.get(`http://localhost:3000/articles/${id}`, {
+    const response = await axios.get(`${BASE_URL}/articles/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -38,7 +57,16 @@ export const fetchArticleById = async (id) => {
 //Search articles
 export const searchArticlesApi = async (query) => {
   try {
-    const response = await axios.get('http://localhost:3000/search', { params: { query } });
+    const token = localStorage.getItem('authToken');
+    
+    const response = await axios.get(`${BASE_URL}/search`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: { query },
+
+  });
+    console.log(response.data)
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar artigos:", error);
@@ -51,7 +79,7 @@ export const postNewArticle = async (articleData) => {
   try {
     const token = localStorage.getItem('authToken');
     const response = await axios.post(
-      'http://localhost:3000/articles/new',
+      `${BASE_URL}/articles/new`,
       articleData,
       {
         headers: {
@@ -71,7 +99,7 @@ export const putEditArticle = async (id, articleData) => {
   try {
     const token = localStorage.getItem('authToken');
     const response = await axios.put(
-      `http://localhost:3000/articles/put/${id}`,
+      `${BASE_URL}/articles/put/${id}`,
       articleData,
       {
         headers: {
@@ -91,7 +119,7 @@ export const deleteArticle = async (id) => {
 
   try {
     const token = localStorage.getItem('authToken');
-    const response = await axios.delete(`http://localhost:3000/articles/delete/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/articles/delete/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

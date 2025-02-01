@@ -11,6 +11,15 @@ module.exports = (app, repository) =>{
         res.json({ total: totalArticles });
     });
 
+    app.get('/articles/categories-tags', validateToken, async (req, res) => {
+        try {
+            const data = await repository.getCategoriesTagsArticles();
+            res.json(data);
+        } catch (error) {
+            res.status(500).json({ message: 'Erro ao buscar categorias e tags', error: error.message });
+        }
+    });
+
     //Artigo por ID
     app.get('/articles/:id', validateToken, async (req, res, next) =>{
         const article = await repository.getArticleId(req.params.id)
@@ -19,7 +28,6 @@ module.exports = (app, repository) =>{
         res.json(article)
     })
 
-    //Retorna todos os artigos, ou a quantidade passada
     app.get('/articles', validateToken, async (req, res, next) => {
         const { page } = req.query;
     
@@ -31,12 +39,14 @@ module.exports = (app, repository) =>{
             }
     
             const articles = await repository.findArticles(pageNum);
+            const totalArticles = await repository.countArticles(); // Adiciona o total de artigos
+    
             if (!articles || !articles.length) {
                 return res.status(404).json({ message: 'No articles found for this page' });
             }
-
+    
             console.log('Articles fetched:', articles.map((a) => a._id));
-            return res.json(articles);
+            return res.json({ articles, totalArticles }); // Retorna os artigos e o total
         }
     
         // Caso "page" não seja fornecido, retorna todos os artigos
@@ -49,7 +59,7 @@ module.exports = (app, repository) =>{
     });
 
     // Endpoint de busca
-    app.get('/search', async (req, res) => {
+    app.get('/search', validateToken, async (req, res) => {
         try {
         const { query } = req.query;
     
@@ -58,6 +68,7 @@ module.exports = (app, repository) =>{
         }
     
         const results = await repository.searchArticles(query);
+        console.log(results)
         res.status(200).json(results);
         } catch (error) {
         res.status(500).json({ message: "Erro no servidor", error });

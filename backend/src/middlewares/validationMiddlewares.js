@@ -1,5 +1,9 @@
 const { schema, schemaPatch } = require("../schemas/articleSchema")
-const {userSchema, userSchemaPatch}  = require("../schemas/userSchema")
+const {userSchema, userSchemaPatch, passwordSchema}  = require("../schemas/userSchema")
+const { findUserByEmail } = require("../repository/repositoryUsers")
+
+const { ADMIN_PROFILE } = require('../utils/profile')
+
 const jwt = require('jsonwebtoken')
 
 function validateArticle(req, res, next){
@@ -49,6 +53,21 @@ function validateUser(req, res, next){
     next()
 }
 
+function validateResetPassword(req, res, next) {
+    if (!req.body) return res.status(422).json('Campos indefinidos');
+  
+    const { error } = passwordSchema.validate(req.body.password); // Validando apenas o campo password
+  
+    if (error) {
+      const { details } = error;
+      // Filtrando erros relacionados ao padrão para permitir espaços
+      const filteredErrors = details.filter(detail => detail.message.indexOf('pattern') !== -1);
+      return res.status(422).json(filteredErrors.map(m => m.message));
+    }
+  
+    next();
+}
+
 function validateUserPatch(req, res, next){
 
     if(!req.body) return res.status(422).json('Undefined fields')
@@ -66,8 +85,30 @@ function validateUserPatch(req, res, next){
     next()
 }
 
-const ADMIN_PROFILE = 1;
-const GUEST_PROFILE = 2;
+async function emailConfirmation(req, res, next) {
+    const { email } = req.body; // Assumindo que o email está no corpo da requisição
+
+    if (!email) {
+        return res.status(400).json({ error: "Email é obrigatório." });
+    }
+
+    try {
+        const user = await findUserByEmail(email);
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado." });
+        }
+
+        if (!user.emailConfirmed) {
+            return res.status(403).json({ error: "Email ainda não confirmado." });
+        }
+
+        next(); // Permite o fluxo continuar se o email foi confirmado
+    } catch (error) {
+        console.error("Erro ao validar email:", error);
+        res.status(500).json({ error: "Erro interno ao validar email." });
+    }
+}
 
 //Função para verificar se o usuário tem permissões de admin ou não Authorization
 function validateAdmin(req, res, next){
@@ -85,8 +126,8 @@ module.exports = {
     validateArticlePatch,
     validateUser,
     validateUserPatch,
+    emailConfirmation,
+    validateResetPassword,
 
     validateAdmin,
-    ADMIN_PROFILE,
-    GUEST_PROFILE
 }

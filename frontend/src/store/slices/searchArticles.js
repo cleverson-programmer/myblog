@@ -25,7 +25,9 @@ const searchSlice = createSlice({
       state.query = action.payload;
     },
     clearResults(state) {
-      state.results = [];
+      state.results = []; // Limpa os resultados
+      state.status = 'idle'; // Reseta o status
+      state.error = null; // Reseta o erro
     },
   },
   extraReducers: (builder) => {

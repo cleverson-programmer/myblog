@@ -1,10 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import logotype from "../../../public/Tech100px.png";
 import Image from "next/image";
+import logotype from "../../../public/Tech100px.png";
+import PasswordToggle from "./PasswordToggle";
 
-const FieldsForm = ({ email, password, setEmail, setPassword, error, loading }) => {
+const FieldsForm = ({
+  email,
+  password,
+  confirmPassword,
+  setEmail,
+  setPassword,
+  setConfirmPassword,
+  passwordErrors,
+  error,
+  loading,
+}) => {
   return (
     <>
       <div className="mb-2 flex justify-end">
@@ -27,15 +38,32 @@ const FieldsForm = ({ email, password, setEmail, setPassword, error, loading }) 
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="mb-6">
+      <div className="mb-4">
         <label className="block text-lg font-medium text-gray-700">Password</label>
-        <input
-          type="password"
+        <PasswordToggle
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={setPassword}
           placeholder="Enter your password"
-          required
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+        {/* Mostrar os requisitos não atendidos */}
+        <ul className="text-sm text-red-500 mt-2">
+          {passwordErrors.map((error, index) => (
+            <li key={index}>- {error}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="mb-6">
+        <label className="block text-lg font-medium text-gray-700">
+          Confirm Password
+        </label>
+        <PasswordToggle
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm your password"
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
         />
       </div>
       <div className="mb-6 text-md flex flex-col justify-center items-start font-medium">
@@ -62,3 +90,4 @@ const FieldsForm = ({ email, password, setEmail, setPassword, error, loading }) 
 };
 
 export default FieldsForm;
+

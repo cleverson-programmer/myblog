@@ -5,6 +5,9 @@ const articlesRepository = require('./repository/repositoryArticles');
 const usersAPI = require('./api/user'); 
 const usersRepository = require('./repository/repositoryUsers');
 
+const emailsAPI = require('./api/email')
+const emailsRepository = require('./repository/repositoyEmail')
+
 const server = require('./server/server');
 
 async function dependencies() {
@@ -14,7 +17,8 @@ async function dependencies() {
         // Inicia o servidor com ambas as APIs e seus repositórios
         await server.start([
             { api: articlesAPI, repository: articlesRepository },
-            { api: usersAPI, repository: usersRepository }
+            { api: usersAPI, repository: usersRepository },
+            { api: emailsAPI, repository: emailsRepository }
         ]);
     } catch (error) {
         console.error(error);

@@ -5,13 +5,13 @@ import { createArticle } from "@/store/slices/newArticleSlice";
 
 import InputField from "@/components/articles/InputField";
 import TextAreaField from "@/components/articles/TextAreaField";
-import MarkdownInput from "@/components/articles/MarkdownEditor";
 import MultiCategoryInput from "@/components/articles/MultiSelectField";
 import DatePickerField from "@/components/articles/DatePickerField";
 import { Header } from "@/components/home/nav/header";
 
 import AdminRoute from "@/validations/adminRoute";
 import Notification from "@/utils/notification";
+import TextEditor from "@/components/articles/textEditor";
 
 const CreateArticle = () => {
   const [formData, setFormData] = useState({
@@ -30,6 +30,7 @@ const CreateArticle = () => {
   const [notification, setNotification] = useState(null);
 
   const [isAdmin, setIsAdmin] = useState(false);
+
 
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.newArticle);
@@ -64,6 +65,8 @@ const CreateArticle = () => {
     }
   };
 
+
+
   {loading && <p>Enviando artigo...</p>}
   {error && <p className="text-red-500">Erro: {error}</p>}
 
@@ -93,11 +96,11 @@ const CreateArticle = () => {
           onChange={(e) => handleChange("description", e.target.value)}
           placeholder="Enter a brief description"
         />
-        <MarkdownInput
-          label="Content"
-          value={formData.content}
-          onChange={(value) => handleChange("content", value)}
+        <TextEditor
+        value={formData.content}
+        onChange={(value) => handleChange("content", value)}
         />
+
         <MultiCategoryInput
           label="Categories"
           categories={formData.categories}

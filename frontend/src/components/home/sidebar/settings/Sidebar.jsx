@@ -82,12 +82,13 @@ export function SidebarSettings(){
                     <a href="/admin/user/new" className="mb-2">
                       Insert new admin user
                     </a>
-                    <a href="/user/edit" className="mb-2">
+                    <a href="/user/view" className="mb-2">
                       View users
                     </a>
                   </div>
                 </div>
               )}
+               <a href={'/email/send'} className="mb-2 text-center flex justify-center font-semibold">Send Email</a>
               <a href={'/dashboard'} className="mb-2 text-center flex justify-center font-semibold">Graphics</a>
             </div>
           

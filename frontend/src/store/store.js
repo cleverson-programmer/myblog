@@ -10,6 +10,9 @@ import articlesTableReducer from './slices/articleTableSlice'
 import putArticleReducer from './slices/putArticleSlice';
 import deleteArticleReducer from './slices/deleteArticleSlice'
 import searchArticlesReducer from './slices/searchArticles'
+import userTableReducer from './slices/userTableSlice'
+import deleteUserReducer from './slices/deleteUserSlice'
+import categoriesTagsReducer from './slices/categoriesTagsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +27,9 @@ export const store = configureStore({
     putArticle: putArticleReducer,
     deleteArticle: deleteArticleReducer,
     search: searchArticlesReducer,
+    usersTable: userTableReducer,
+    deleteUser: deleteUserReducer,
+    categoriesTags: categoriesTagsReducer,
   },
 });
 

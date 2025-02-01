@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import Link from "next/link";
 
 export function ButtonMain({ onClick, className = "", disabled = false }) {
   const language = useSelector((state) => state.language.language);
@@ -12,7 +13,9 @@ export function ButtonMain({ onClick, className = "", disabled = false }) {
         }`}
         disabled={disabled}
       >
-        {language === "pt" ? "Ver Mais" : "Show More"}
+        <Link href={`/articles`}>
+          {language === "pt" ? "Ver Mais" : "Show More"}
+        </Link>
       </button>
     </div>
   );

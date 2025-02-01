@@ -75,12 +75,14 @@ export function Menu(){
                         className="absolute text-black top-full left-0 w-full h-40 overflow-y-scroll bg-white border border-gray-300 shadow-lg rounded-lg z-10"
                     >
                         {results.map((article) => (
-                        <li
-                            key={article._id}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                        >
-                            {article.title}
-                        </li>
+                        <a key={article._id} href={`/articles/${article._id}`}>
+                          <li
+                              key={article._id}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                              {article.title}
+                          </li>
+                        </a>
                         ))}
                     </ul>
                 )}

@@ -1,9 +1,11 @@
-"use client";
+import React from 'react';
+import  {  Hypnosis  }  from  "react-cssfx-loading";
+import './loading.css'; // Importando o arquivo de estilos
 
 export default function Loading() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+    <div className="loading-overlay">
+      <Hypnosis color="#2E2D78" width="60px" height="60px" duration="3s" />
     </div>
   );
 }

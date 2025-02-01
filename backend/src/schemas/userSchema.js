@@ -21,7 +21,9 @@ const userSchema = Joi.object({
       "string.min": "Password must be at least 6 characters long.",
       "string.pattern.base": "The password must contain at least one capital letter, one number and one symbol.",
       "any.required": "Password is required"
-    })
+    }),
+  
+  emailConfirmed: Joi.boolean()
 });
 
 // Schema de validação com Joi
@@ -48,7 +50,21 @@ const userSchemaPatch = Joi.object({
       })
   });
 
+const passwordSchema = Joi.object({
+
+  password: Joi.string()
+    .min(6)
+    .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/)
+    .required()
+    .messages({
+      "string.min": "Password must be at least 6 characters long.",
+      "string.pattern.base": "The password must contain at least one capital letter, one number and one symbol.",
+      "any.required": "Password is required"
+    })
+})
+
 module.exports = {
     userSchema,
-    userSchemaPatch
+    userSchemaPatch,
+    passwordSchema
 }

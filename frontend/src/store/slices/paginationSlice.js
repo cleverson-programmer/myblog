@@ -1,14 +1,12 @@
-// frontend/store/slices/paginationSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchArticles } from '@/api/articleApi';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchArticles } from "@/api/articleApi";
 
-// Thunk para buscar artigos paginados
 export const fetchPaginatedArticles = createAsyncThunk(
-  'pagination/fetchPaginatedArticles',
+  "pagination/fetchPaginatedArticles",
   async (page, { rejectWithValue }) => {
     try {
-      const articles = await fetchArticles(page);
-      return { articles, page };
+      const response = await fetchArticles(page); // Retorna { articles, totalArticles }
+      return response;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -16,17 +14,22 @@ export const fetchPaginatedArticles = createAsyncThunk(
 );
 
 const paginationSlice = createSlice({
-  name: 'pagination',
+  name: "pagination",
   initialState: {
     articles: [],
-    currentPage: 1,
+    currentPage: 1, 
+    totalArticles: 0,
     loading: false,
-    error: null,
+    error: null, 
   },
   reducers: {
+    setCurrentPage(state, action) {
+      state.currentPage = action.payload;
+    },
     resetPagination(state) {
       state.articles = [];
       state.currentPage = 1;
+      state.totalArticles = 0;
       state.error = null;
     },
   },
@@ -38,8 +41,8 @@ const paginationSlice = createSlice({
       })
       .addCase(fetchPaginatedArticles.fulfilled, (state, action) => {
         state.loading = false;
-        state.articles = action.payload.articles;
-        state.currentPage = action.payload.page;
+        state.articles = action.payload.articles; // Armazena apenas os artigos
+        state.totalArticles = action.payload.totalArticles; // Armazena o total de artigos
       })
       .addCase(fetchPaginatedArticles.rejected, (state, action) => {
         state.loading = false;
@@ -48,5 +51,5 @@ const paginationSlice = createSlice({
   },
 });
 
-export const { resetPagination } = paginationSlice.actions;
+export const { setCurrentPage, resetPagination } = paginationSlice.actions;
 export default paginationSlice.reducer;

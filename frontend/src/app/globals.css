@@ -14,6 +14,10 @@
   }
 } */
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   @apply bg-lightBackground text-gray-900 transition-all duration-300;
 }
